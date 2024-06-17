@@ -97,6 +97,9 @@ Before we begin, make sure you have the following:
 
 ---
 
+## For more details, visit the [NestJS video Explanation ](https://www.loom.com/share/fc61b1d414ef42c2b27628a8d7aa6f48?sid=c2c82d44-339c-4893-955e-6af3106e4e5c).
+
+
 ## Conclusion:
 
 Great job! we have  successfully cloned a NestJS "Hello World" app from GitHub and deployed it on an AWS EC2 instance. 
