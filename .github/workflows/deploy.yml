@@ -3,7 +3,7 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - master
+      - main  # Adjust as per your main branch name
 
 jobs:
   deploy:
@@ -12,19 +12,14 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+      
+    - name: Install dependencies
+      run: npm install
+      
+    - name: Build the application
+      run: npm run build
 
-    - name: Install AWS CLI
+    - name: Deploy to EC2 instance
       run: |
-        sudo apt-get update
-        sudo apt-get install -y awscli
-
-    - name: Configure AWS credentials
-      run: |
-        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws configure set default.region us-west-2
-
-    - name: SSH into EC2 instance and deploy
-      run: |
-       ssh -o StrictHostKeyChecking=no ubuntu@54.212.20.31 'git clone https://github.com/udaychopade27/NestJS-App-Deployment-.git && cd NestJS-App-Deployment- && npm install && npm run build && pm2 restart all'
+        ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }} 'cd /home/ubuntu/typescript-starter && git pull && npm install && npm run build && pm2 restart all'
 
