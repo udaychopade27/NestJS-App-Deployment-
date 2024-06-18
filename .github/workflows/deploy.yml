@@ -26,5 +26,5 @@ jobs:
 
     - name: SSH into EC2 instance and deploy
       run: |
-        ssh ubuntu@54.212.20.31 'git clone https://github.com/udaychopade27/NestJS-App-Deployment-.git && cd NestJS-App-Deployment- && npm install && npm run build && pm2 restart all'
+       ssh -o StrictHostKeyChecking=no ssh ubuntu@54.212.20.31 'git clone https://github.com/udaychopade27/NestJS-App-Deployment-.git && cd NestJS-App-Deployment- && npm install && npm run build && pm2 restart all'
 
