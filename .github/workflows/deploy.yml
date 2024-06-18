@@ -12,14 +12,24 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-      
-    - name: Install dependencies
-      run: npm install
-      
-    - name: Build the application
-      run: npm run build
 
-    - name: Deploy to EC2 instance
+    - name: Set up SSH key
       run: |
-        ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_SSH_KEY }} ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }} 'cd /home/ubuntu/typescript-starter && git pull && npm install && npm run build && pm2 restart all'
+        echo "${{ secrets.EC2_SSH_KEY }}" > ec2_key.pem
+        chmod 600 ec2_key.pem
+
+    - name: Add SSH key to SSH agent
+      run: |
+        eval "$(ssh-agent -s)"
+        ssh-add ec2_key.pem
+
+    - name: SSH into EC2 instance and deploy
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }} << 'EOF'
+          cd /home/ubuntu/typescript-starter
+          git pull origin master
+          npm install
+          npm run build
+          pm2 restart all
+        EOF
 
