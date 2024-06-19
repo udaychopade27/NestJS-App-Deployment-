@@ -18,7 +18,7 @@ jobs:
             USER_NAME: ${{secrets.USERNAME}}
       
         run: |
-          echo "${env.PRIVATE_KEY}" > private_key.pem && chmod 600 private_key.pem
+          echo "$PRIVATE_KEY" > private_key.pem && chmod 600 private_key.pem
           ssh -o StrictHostKeyChecking=no -i private_key.pem ${env.USER_NAME}@${env.HOSTNAME} '
 
           cd /home/ubuntu/typescript-starter/
