@@ -2,34 +2,28 @@ name: Deploy to EC2
 
 on:
   push:
-    branches:
-      - master
+    branches: master
 
 jobs:
-  deploy:
+  Deploy:
+    name: Deploy to EC2
     runs-on: ubuntu-latest
-
+    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - uses: actions/checkout@v2 
+      - name: Build & Deploy
+        env:
+            PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+            HOSTNAME: ${{secrets.HOST_DNS}}
+            USER_NAME: ${{secrets.USERNAME}}
+      
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOST_DNS} '
 
-    - name: Set up SSH key
-      run: |
-        echo "${{ secrets.EC2_SSH_KEY }}" > ec2_key.pem
-        chmod 600 ec2_key.pem
-
-    - name: Add SSH key to SSH agent
-      run: |
-        eval "$(ssh-agent -s)"
-        ssh-add ec2_key.pem
-
-    - name: SSH into EC2 instance and deploy
-      run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }} << 'EOF'
-          cd /home/ubuntu/typescript-starter
+          cd /home/ubuntu/typescript-starter/
           git pull origin master
           npm install
           npm run build
           pm2 restart all
-        EOF
-
+          '
