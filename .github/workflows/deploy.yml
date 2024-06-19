@@ -19,11 +19,11 @@ jobs:
       
         run: |
           echo "$PRIVATE_KEY" > private_key.pem && chmod 600 private_key.pem
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ${env.USER_NAME}@${env.HOSTNAME} '
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ${USER_NAME}@${HOSTNAME} '
 
-          cd /home/ubuntu/typescript-starter/
-          git pull origin master
-          npm install
-          npm run build
+          cd /home/ubuntu/typescript-starter/ &&
+          git pull origin master &&
+          npm install &&
+          npm run build &&
           pm2 restart all
           '
